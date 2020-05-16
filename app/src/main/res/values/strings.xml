@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">mtls</string>
+    <string name="server_name_label">Name</string>
+    <string name="server_url_label">Server URL</string>
+    <string name="organization_name_label">Organization Name</string>
+    <string name="issuer_label">Certificate Issuer</string>
+    <string name="invalid_url_message">Invalid URL</string>
+</resources>
