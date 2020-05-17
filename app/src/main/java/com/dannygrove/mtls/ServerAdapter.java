@@ -1,9 +1,11 @@
 package com.dannygrove.mtls;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,12 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
         this.context = context;
     }
 
+    public void updateServerList(List<Server> newList) {
+        serverList.clear();
+        serverList.addAll(newList);
+        this.notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +43,13 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 
         holder.textViewHead.setText(server.name);
         holder.textViewSubhead.setText(server.organization_name);
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(this,  ServerItemActivity.class);
+            }
+        });
     }
 
 
@@ -47,11 +62,13 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 
         public TextView textViewHead;
         public TextView textViewSubhead;
+        public LinearLayout linearLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewHead = (TextView) itemView.findViewById(R.id.textViewHead);
             textViewSubhead = (TextView) itemView.findViewById(R.id.textViewSubHead);
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.serverListItem);
         }
     }
 }

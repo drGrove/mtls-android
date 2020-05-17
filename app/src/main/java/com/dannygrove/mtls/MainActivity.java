@@ -1,11 +1,14 @@
 package com.dannygrove.mtls;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import java.util.GregorianCalendar;
@@ -13,9 +16,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int ADD_SERVER_REQUEST = 1;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter serverAdapter;
-    private List<ServerListItem> serverList;
+    private List<Server> serverList;
     private ServerDBHelper serverDBHelper;
 
     @Override
@@ -27,14 +31,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         serverDBHelper = ServerDBHelper.getInstance(this);
-        serverAdapter = new ServerAdapter(serverDBHelper.getServers(), this);
+        serverList = serverDBHelper.getServers();
+        serverAdapter = new ServerAdapter(serverList, this);
+        new ItemTouchHelper(serverListItemTouchHelperCallback).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(serverAdapter);
+    }
+
+    private void updateServerList() {
+        serverAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void  onResume() {
         super.onResume();
-        serverAdapter.notifyDataSetChanged();
+        updateServerList();
     }
 
     @Override
@@ -52,4 +62,30 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this,  UserProfileActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_SERVER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                updateServerList();
+            }
+        }
+    }
+
+    ItemTouchHelper.SimpleCallback serverListItemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.d("MainActivity", "Does a thing");
+            Integer position = viewHolder.getAdapterPosition();
+            Server server = serverList.get(position);
+            serverDBHelper.removeServer(server);
+            serverList.remove(position);
+        }
+    };
 }

@@ -35,6 +35,7 @@ public class Server {
         String issuer = cursor.getString(cursor.getColumnIndexOrThrow(ServerEntry.COLUMN_NAME_ISSUER));
         String lifetime = cursor.getString(cursor.getColumnIndexOrThrow(ServerEntry.COLUMN_NAME_LIFETIME));
         Server server = new Server();
+        server.id = id;
         server.name = name;
         server.email = email;
         server.fingerprint = fingerprint;

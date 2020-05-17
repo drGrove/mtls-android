@@ -17,9 +17,9 @@ public class ServerDBHelper extends SQLiteOpenHelper {
     private static ServerDBHelper sInstance;
 
     private static final String SQL_CREATE_SERVER_ENTRIES =
-            "CREATE TABLE " + ServerEntry.TABLE_NAME + " (" +
-                    ServerEntry._ID + " INTEGER PRIMARY KEY," +
-                    ServerEntry.COLUMN_NAME_SERVER_NAME + " TEXT," +
+            "CREATE TABLE IF NOT EXISTS " + ServerEntry.TABLE_NAME + " (" +
+                    ServerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    ServerEntry.COLUMN_NAME_SERVER_NAME + " TEXT UNIQUE," +
                     ServerEntry.COLUMN_NAME_URL + " TEXT," +
                     ServerEntry.COLUMN_NAME_ISSUER + " TEXT," +
                     ServerEntry.COLUMN_NAME_LIFETIME + " INTEGER," +
@@ -88,5 +88,14 @@ public class ServerDBHelper extends SQLiteOpenHelper {
         values.put(ServerEntry.COLUMN_NAME_ISSUER, server.issuer);
         long id = db.insert(ServerEntry.TABLE_NAME, null, values);
         Log.d(TAG, "Created record with ID: " + id);
+    }
+
+    public void removeServer(Server server) {
+        SQLiteDatabase db = getWritableDatabase();
+        String selection = "_id = ?";
+        String[] selectionArgs = { Long.toString(server.id) };
+        int deletedRows = db.delete(ServerEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
+        Log.d(TAG, "Deleted " + deletedRows + " Records");
     }
 }
