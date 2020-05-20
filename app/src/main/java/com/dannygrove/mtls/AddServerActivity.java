@@ -1,17 +1,11 @@
 package com.dannygrove.mtls;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.security.KeyChain;
 import android.util.Log;
 import android.view.View;
@@ -32,23 +26,18 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class AddServerActivity extends AppCompatActivity {
 
     public static final String TAG = "AddServerActivity";
-    private ServerDBHelper serverDBHelper = ServerDBHelper.getInstance(this);
     private FloatingActionButton saveFab;
-    //public Certificate caCertificate;
     public String caCertificate;
+    private ServerViewModel mServerViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_server);
+        mServerViewModel = new ViewModelProvider(this).get(ServerViewModel.class);
         saveFab = findViewById(R.id.fab);
         saveFab.setEnabled(false);
         EditText urlEditText = ((TextInputLayout) findViewById(R.id.url)).getEditText();
@@ -74,7 +63,6 @@ public class AddServerActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        serverDBHelper.close();
         super.onDestroy();
     }
 
@@ -124,7 +112,7 @@ public class AddServerActivity extends AppCompatActivity {
         server.organization_name = ((TextInputLayout) activityContext.findViewById(R.id.organization_name)).getEditText().getText().toString();
         server.issuer = ((TextInputLayout) activityContext.findViewById(R.id.issuer)).getEditText().getText().toString();
         Log.i(TAG, "Adding Server");
-        serverDBHelper.addServer(server);
+        mServerViewModel.insert(server);
         addCACertificate();
         finish();
     }

@@ -2,6 +2,8 @@ package com.dannygrove.mtls;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,16 +13,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int ADD_SERVER_REQUEST = 1;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter serverAdapter;
+    private ServerListAdapter adapter;
+    private ServerViewModel mServerViewModel;
     private List<Server> serverList;
-    private ServerDBHelper serverDBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +31,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        serverDBHelper = ServerDBHelper.getInstance(this);
-        serverList = serverDBHelper.getServers();
-        serverAdapter = new ServerAdapter(serverList, this);
         new ItemTouchHelper(serverListItemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(serverAdapter);
-    }
+        adapter = new ServerListAdapter(this);
+        recyclerView.setAdapter(adapter);
+        mServerViewModel = new ViewModelProvider(this).get(ServerViewModel.class);
 
-    private void updateServerList() {
-        serverAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void  onResume() {
-        super.onResume();
-        updateServerList();
+        mServerViewModel.getServers().observe(this, new Observer<List<Server>>() {
+            @Override
+            public void onChanged(List<Server> servers) {
+                adapter.setServers(servers);
+                serverList = servers;
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
-        serverDBHelper.close();
         super.onDestroy();
     }
 
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_SERVER_REQUEST) {
             if (resultCode == RESULT_OK) {
-                updateServerList();
+                //updateServerList();
             }
         }
     }
@@ -84,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", "Does a thing");
             Integer position = viewHolder.getAdapterPosition();
             Server server = serverList.get(position);
-            serverDBHelper.removeServer(server);
+            mServerViewModel.delete(server.id);
             serverList.remove(position);
         }
     };

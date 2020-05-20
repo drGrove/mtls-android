@@ -11,35 +11,29 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder> {
-
-    private List<Server> serverList;
+public class ServerListAdapter extends RecyclerView.Adapter<ServerListAdapter.ServerViewHolder> {
+    private List<Server> serverList = new ArrayList<Server>();
+    private final LayoutInflater mInflator;
     private Context context;
 
-    public ServerAdapter(List<Server> serverList, Context context) {
-        this.serverList = serverList;
+    public ServerListAdapter(Context context) {
         this.context = context;
-    }
-
-    public void updateServerList(List<Server> newList) {
-        serverList.clear();
-        serverList.addAll(newList);
-        this.notifyDataSetChanged();
+        mInflator = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.server_list_item, parent, false);
-        return new ViewHolder(v);
+    public ServerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = mInflator.inflate(R.layout.server_list_item, parent, false);
+        return new ServerViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Server server = serverList.get(position);
+    public void onBindViewHolder(ServerViewHolder holder, int position) {
+        final Server server = serverList.get(position);
 
         holder.textViewHead.setText(server.name);
         holder.textViewSubhead.setText(server.organization_name);
@@ -47,24 +41,32 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
 
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(this,  ServerItemActivity.class);
+                Intent intent = new Intent(context, ServerDetailActivity.class);
+                intent.putExtra("id", server.id);
+                context.startActivity(intent);
             }
         });
     }
 
-
     @Override
     public int getItemCount() {
-        return serverList.size();
+        if (serverList != null)
+            return serverList.size();
+        else return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public void setServers(List<Server> servers) {
+        serverList = servers;
+        notifyDataSetChanged();
+    }
+
+    class ServerViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textViewHead;
         public TextView textViewSubhead;
         public LinearLayout linearLayout;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ServerViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewHead = (TextView) itemView.findViewById(R.id.textViewHead);
             textViewSubhead = (TextView) itemView.findViewById(R.id.textViewSubHead);
