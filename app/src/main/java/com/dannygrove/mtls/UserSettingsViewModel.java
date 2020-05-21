@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 
 public class UserSettingsViewModel extends AndroidViewModel {
     private MTLSRepository mRepository;
-    private LiveData<UserSettings> mUserSettings;
+    private UserSettings mUserSettings;
 
     public UserSettingsViewModel(Application application) {
         super(application);
@@ -15,8 +15,12 @@ public class UserSettingsViewModel extends AndroidViewModel {
         mUserSettings = mRepository.getUserSettings();
     }
 
-    LiveData<UserSettings> getUserSettings() {
+    UserSettings get() {
         return mUserSettings;
+    }
+
+    void update(UserSettings settings) {
+        mRepository.updateUserSettings(settings);
     }
 
     public void insert(UserSettings userSettings) {

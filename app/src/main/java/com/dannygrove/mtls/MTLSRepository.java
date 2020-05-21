@@ -7,27 +7,21 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class MTLSRepository {
-    private UserSettingsDAO mUserSettingsDao;
-    private LiveData<UserSettings> mUserSettings;
-    private ServerDAO mServerDao;
+    private UserSettingsDAO userSettingsDAO;
+    private UserSettings mUserSettings;
+    private ServerDAO serverDAO;
     private LiveData<List<Server>> mServers;
 
     MTLSRepository(Application application) {
         MTLSDatabase db = MTLSDatabase.getDatabase(application);
-        mUserSettingsDao = db.userSettingsDAO();
-        mUserSettings = mUserSettingsDao.getUserSettings(1);
-        mServerDao = db.serverDAO();
-        mServers = mServerDao.getServer();
+        userSettingsDAO = db.userSettingsDAO();
+        mUserSettings = userSettingsDAO.getUserSettings(1);
+        serverDAO = db.serverDAO();
+        mServers = serverDAO.getServer();
     }
 
-    LiveData<UserSettings> getUserSettings() {
+    UserSettings getUserSettings() {
         return mUserSettings;
-    }
-
-    void insertUserSettings(UserSettings userSettings) {
-        MTLSDatabase.databaseWriteExecutor.execute(() -> {
-            mUserSettingsDao.insert(userSettings);
-        });
     }
 
     LiveData<List<Server>> getServers() {
@@ -35,24 +29,36 @@ public class MTLSRepository {
     }
 
     Server getServer(Long id) {
-        return mServerDao.getServer(id);
+        return serverDAO.getServer(id);
     }
 
     void insertServer(Server server) {
         MTLSDatabase.databaseWriteExecutor.execute(() -> {
-            mServerDao.insert(server);
+            serverDAO.insert(server);
         });
     }
 
     void updateServer(Server server) {
         MTLSDatabase.databaseWriteExecutor.execute(() -> {
-            mServerDao.update(server);
+            serverDAO.update(server);
         });
     }
 
     void deleteServer(Long id) {
         MTLSDatabase.databaseWriteExecutor.execute(() -> {
-            mServerDao.delete(id);
+            serverDAO.delete(id);
+        });
+    }
+
+    void updateUserSettings(UserSettings userSettings) {
+        MTLSDatabase.databaseWriteExecutor.execute(() -> {
+            userSettingsDAO.update(userSettings);
+        });
+    }
+
+    void insertUserSettings(UserSettings userSettings) {
+        MTLSDatabase.databaseWriteExecutor.execute(() -> {
+            userSettingsDAO.insert(userSettings);
         });
     }
 }

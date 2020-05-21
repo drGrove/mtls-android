@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface UserSettingsDAO {
     @Query("SELECT * FROM user_settings")
     LiveData<List<UserSettings>> getUserSettings();
 
-    @Query("SELECT * FROM user_settings WHERE _id=:id")
-    LiveData<UserSettings> getUserSettings(long id);
+    @Query("SELECT * FROM user_settings WHERE _id = :id")
+    UserSettings getUserSettings(long id);
+
+    @Update
+    void update(UserSettings userSettings);
 }
