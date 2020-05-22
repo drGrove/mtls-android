@@ -3,7 +3,6 @@ package com.dannygrove.mtls;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 public class UserSettingsViewModel extends AndroidViewModel {
     private MTLSRepository mRepository;
