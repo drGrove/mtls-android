@@ -11,9 +11,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Server.class, UserSettings.class}, version = 1, exportSchema = false)
+@Database(entities = {Server.class}, version = 1, exportSchema = false)
 public abstract class MTLSDatabase extends RoomDatabase {
-    public abstract UserSettingsDAO userSettingsDAO();
     public abstract ServerDAO serverDAO();
 
     private static volatile MTLSDatabase INSTANCE;

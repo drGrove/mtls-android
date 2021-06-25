@@ -3,7 +3,6 @@ package com.dannygrove.mtls;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.security.KeyChain;

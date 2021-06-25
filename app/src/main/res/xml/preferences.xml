@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="User"
+        app:title="@string/user_label">
+        <EditTextPreference
+            app:key="name"
+            app:title="@string/name"
+            app:useSimpleSummaryProvider="true"
+            />
+
+        <EditTextPreference
+            app:key="email"
+            app:title="@string/email_label"
+            app:useSimpleSummaryProvider="true"
+            />
+
+        <EditTextPreference
+            app:key="organization_name"
+            app:title="@string/organization_name_label"
+            app:useSimpleSummaryProvider="true"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="crypto"
+        app:title="@string/crypto_label"
+        >
+        <Preference
+            app:key="openpgp_key_id"
+            app:title="@string/openpgp_key_label"
+            app:useSimpleSummaryProvider="true"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>

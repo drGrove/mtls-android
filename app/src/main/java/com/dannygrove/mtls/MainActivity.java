@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showUserProfile(View view) {
-        Intent intent = new Intent(this,  UserProfileActivity.class);
+        Intent intent = new Intent(this,  UserSettingsActivity.class);
         startActivity(intent);
     }
 

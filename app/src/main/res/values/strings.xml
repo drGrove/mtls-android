@@ -9,4 +9,12 @@
     <string name="state_label">State or Provence</string>
     <string name="email_label">Email Address</string>
     <string name="country_label">Country</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">Full Name</string>
+    <string name="user_label">User</string>
+    <string name="crypto_label">Crypto</string>
+    <string name="openpgp_key_label">OpenPGP Key id</string>
+    <string name="settings_page_title">Settings</string>
 </resources>
