@@ -85,5 +85,6 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_save_24dp"
         android:onClick="saveUserSettings"
+        android:contentDescription="@string/save_button"
         app:layout_anchor="@id/bar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

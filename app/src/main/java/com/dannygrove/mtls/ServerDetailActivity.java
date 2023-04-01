@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -55,6 +57,7 @@ import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -260,12 +263,11 @@ public class ServerDetailActivity extends AppCompatActivity implements KeyChainA
             ByteArrayInputStream is = new ByteArrayInputStream(certStr.getBytes());
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             Certificate cert = cf.generateCertificate(is);
-            pk12KeyStore.setKeyEntry(server.name, privateKey, null, new Certificate[]{cert});
+            pk12KeyStore.setKeyEntry(server.name, privateKey, "".toCharArray(), new Certificate[]{cert});
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            pk12KeyStore.store(os, null);
+            pk12KeyStore.store(os, "".toCharArray());
             Intent certInstallIntent = KeyChain.createInstallIntent();
-            Log.d(TAG, String.valueOf(os));
-            certInstallIntent.putExtra(KeyChain.EXTRA_PKCS12, String.valueOf(os));
+            certInstallIntent.putExtra(KeyChain.EXTRA_PKCS12, os.toByteArray());
             certInstallIntent.putExtra(KeyChain.EXTRA_KEY_ALIAS, server.name);
             certInstallIntent.putExtra(KeyChain.EXTRA_NAME,  server.name);
             startActivity(certInstallIntent);
@@ -275,8 +277,8 @@ public class ServerDetailActivity extends AppCompatActivity implements KeyChainA
     }
 
     private void SendRequestToServer() {
-        String url = server.url;
-        Map<String, String> params = new HashMap<String, String>();
+        String url = server.url.concat("/certs");
+        Map<String, String> params = new HashMap<>();
         String lifetime;
         if (server.lifetime == null) {
             lifetime = String.valueOf(64800);
@@ -284,10 +286,8 @@ public class ServerDetailActivity extends AppCompatActivity implements KeyChainA
             lifetime = server.lifetime;
         }
         params.put("csr", csrPublicByteString);
-        params.put("signature", openPgpDetachedSignature);
         params.put("lifetime", lifetime);
-        params.put("type", "CERTIFICATE");
-        JsonObjectRequest req = new JsonObjectRequest(url, new JSONObject(params), new Response.Listener<JSONObject>() {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -323,7 +323,16 @@ public class ServerDetailActivity extends AppCompatActivity implements KeyChainA
                         Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        }) {
+            @Override
+            public Map getHeaders() throws AuthFailureError {
+                HashMap headers = new HashMap();
+                headers.put("Content-Type", "application/json");
+                String encodedSignature = Base64.getEncoder().encodeToString(openPgpDetachedSignature.getBytes());
+                headers.put("Authorization", "PGP-SIG ".concat(encodedSignature));
+                return headers;
+            }
+        };
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(req);
     }

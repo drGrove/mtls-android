@@ -1,6 +1,6 @@
 package com.dannygrove.mtls;
 
-// Based of: https://stackoverflow.com/questions/37850134/certificate-enrollment-process
+// Based off: https://stackoverflow.com/questions/37850134/certificate-enrollment-process
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.X500Name;
