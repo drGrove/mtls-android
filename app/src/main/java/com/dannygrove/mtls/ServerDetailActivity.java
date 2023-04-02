@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.security.KeyChainException;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -130,6 +130,14 @@ public class ServerDetailActivity extends AppCompatActivity implements KeyChainA
                 }
         );
         mOpenPgpServiceConnection.bindToService();
+    }
+
+    @Override
+   protected void onDestroy() {
+        if (mOpenPgpServiceConnection != null) {
+            mOpenPgpServiceConnection.unbindFromService();
+        }
+        super.onDestroy();
     }
 
     private void getIncomingIntent() {

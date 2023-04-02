@@ -3,6 +3,7 @@ package com.dannygrove.mtls;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "servers")
@@ -27,5 +28,6 @@ public class Server {
         this.name = name;
     }
 
+    @Ignore
     public Server() {}
 }

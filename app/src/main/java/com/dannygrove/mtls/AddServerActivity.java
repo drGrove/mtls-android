@@ -25,6 +25,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class AddServerActivity extends AppCompatActivity {
 
     public static final String TAG = "AddServerActivity";
@@ -40,7 +42,7 @@ public class AddServerActivity extends AppCompatActivity {
         saveFab = findViewById(R.id.fab);
         saveFab.setEnabled(false);
         EditText urlEditText = ((TextInputLayout) findViewById(R.id.url)).getEditText();
-        urlEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+        Objects.requireNonNull(urlEditText).setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)  {
@@ -75,7 +77,7 @@ public class AddServerActivity extends AppCompatActivity {
 
                     // Update Issuer Field
                     EditText issuerEditText = (EditText) ((TextInputLayout)AddServerActivity.this.findViewById(R.id.issuer)).getEditText();
-                    issuerEditText.setText(caJsonObject.getString("issuer"));
+                    Objects.requireNonNull(issuerEditText).setText(caJsonObject.getString("issuer"));
 
                     // Store CA Certificate into memory for save operation.
                     AddServerActivity.this.caCertificate = caJsonObject.getString("cert");
@@ -106,10 +108,10 @@ public class AddServerActivity extends AppCompatActivity {
         //getIssuer(view);
         Server server = new Server();
         View activityContext = (View) view.getParent();
-        server.name = ((TextInputLayout) activityContext.findViewById(R.id.name)).getEditText().getText().toString();
-        server.url = ((TextInputLayout) activityContext.findViewById(R.id.url)).getEditText().getText().toString();
-        server.organization_name = ((TextInputLayout) activityContext.findViewById(R.id.organization_name)).getEditText().getText().toString();
-        server.issuer = ((TextInputLayout) activityContext.findViewById(R.id.issuer)).getEditText().getText().toString();
+        server.name = Objects.requireNonNull(((TextInputLayout) activityContext.findViewById(R.id.name)).getEditText()).getText().toString();
+        server.url = Objects.requireNonNull(((TextInputLayout) activityContext.findViewById(R.id.url)).getEditText()).getText().toString();
+        server.organization_name = Objects.requireNonNull(((TextInputLayout) activityContext.findViewById(R.id.organization_name)).getEditText()).getText().toString();
+        server.issuer = Objects.requireNonNull(((TextInputLayout) activityContext.findViewById(R.id.issuer)).getEditText()).getText().toString();
         Log.i(TAG, "Adding Server");
         mServerViewModel.insert(server);
         addCACertificate();
